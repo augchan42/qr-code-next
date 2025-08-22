@@ -23,19 +23,21 @@
 
 "use strict";
 
+import { qrcodegen } from "./qrcodegen";
 
-namespace app {
+
+export namespace app {
 	
 	function initialize(): void {
 		getElem("loading").hidden = true;
 		getElem("loaded").hidden = false;
 		let elems = document.querySelectorAll("input[type=number], input[type=text], textarea");
-		for (let el of elems) {
+		for (const el of elems) {
 			if (el.id.indexOf("version-") != 0)
-				(el as any).oninput = redrawQrCode;
+				(el as HTMLInputElement).oninput = redrawQrCode;
 		}
 		elems = document.querySelectorAll("input[type=radio], input[type=checkbox]");
-		for (let el of elems)
+		for (const el of elems)
 			(el as HTMLInputElement).onchange = redrawQrCode;
 		redrawQrCode();
 	}
@@ -46,7 +48,7 @@ namespace app {
 		const bitmapOutput: boolean = getInput("output-format-bitmap").checked;
 		const scaleRow : HTMLElement = getElem("scale-row");
 		scaleRow.hidden = !bitmapOutput;
-		let download = getElem("download") as HTMLAnchorElement;
+		const download = getElem("download") as HTMLAnchorElement;
 		download.download = "qr-code." + (bitmapOutput ? "png" : "svg");
 		download.removeAttribute("href");
 		
@@ -57,7 +59,7 @@ namespace app {
 		svg.style.display = "none";
 		
 		// Returns a QrCode.Ecc object based on the radio buttons in the HTML form.
-		function getInputErrorCorrectionLevel(): qrcodegen.QrCode.Ecc {
+		function getInputErrorCorrectionLevel(): any {
 			if (getInput("errcorlvl-medium").checked)
 				return qrcodegen.QrCode.Ecc.MEDIUM;
 			else if (getInput("errcorlvl-quartile").checked)
@@ -151,7 +153,7 @@ namespace app {
 		const width: number = (qr.size + border * 2) * scale;
 		canvas.width = width;
 		canvas.height = width;
-		let ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+		const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 		for (let y = -border; y < qr.size + border; y++) {
 			for (let x = -border; x < qr.size + border; x++) {
 				ctx.fillStyle = qr.getModule(x, y) ? darkColor : lightColor;
@@ -166,7 +168,7 @@ namespace app {
 	function toSvgString(qr: qrcodegen.QrCode, border: number, lightColor: string, darkColor: string): string {
 		if (border < 0)
 			throw new RangeError("Border must be non-negative");
-		let parts: Array<string> = [];
+		const parts: Array<string> = [];
 		for (let y = 0; y < qr.size; y++) {
 			for (let x = 0; x < qr.size; x++) {
 				if (qr.getModule(x, y))

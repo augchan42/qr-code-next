@@ -23,10 +23,12 @@
 
 "use strict";
 
+import { qrcodegen } from "./qrcodegen";
 
-namespace app {
+
+export namespace app {
 	
-	let outputElem = document.getElementById("output") as HTMLElement;
+	const outputElem = document.getElementById("output") as HTMLElement;
 	
 	
 	// The main application program.
@@ -186,15 +188,15 @@ namespace app {
 	
 	
 	function appendHeading(text: string): void {
-		let h2 = outputElem.appendChild(document.createElement("h2"));
+		const h2 = outputElem.appendChild(document.createElement("h2"));
 		h2.textContent = text;
 	}
 	
 	
 	function appendCanvas(caption: string): HTMLCanvasElement {
-		let p = outputElem.appendChild(document.createElement("p"));
+		const p = outputElem.appendChild(document.createElement("p"));
 		p.textContent = caption + ":";
-		let result = document.createElement("canvas");
+		const result = document.createElement("canvas");
 		outputElem.appendChild(result);
 		return result;
 	}
@@ -210,7 +212,7 @@ namespace app {
 		const width: number = (qr.size + border * 2) * scale;
 		canvas.width = width;
 		canvas.height = width;
-		let ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+		const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 		for (let y = -border; y < qr.size + border; y++) {
 			for (let x = -border; x < qr.size + border; x++) {
 				ctx.fillStyle = qr.getModule(x, y) ? darkColor : lightColor;
@@ -222,7 +224,7 @@ namespace app {
 	
 	function toUtf8ByteArray(str: string): Array<number> {
 		str = encodeURI(str);
-		let result: Array<number> = [];
+		const result: Array<number> = [];
 		for (let i = 0; i < str.length; i++) {
 			if (str.charAt(i) != "%")
 				result.push(str.charCodeAt(i));
