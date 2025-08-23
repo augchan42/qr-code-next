@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import GoogleAnalytics from "./GoogleAnalytics";
 import "./globals.css";
 
 const inter = localFont({
@@ -73,6 +74,9 @@ export default function RootLayout({
       >
         {children}
         <Analytics />
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+          <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+        )}
       </body>
     </html>
   );
