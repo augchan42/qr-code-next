@@ -23,7 +23,7 @@ A modern, fast QR code generator built with Next.js that allows you to create pr
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/augustinchan/qr-code-next.git
+git clone https://github.com/augchan42/qr-code-next.git
 cd qr-code-next
 ```
 
@@ -103,7 +103,7 @@ Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 **Augustin Chan**
 - Website: [augustinchan.dev](https://augustinchan.dev)
-- GitHub: [@augustinchan](https://github.com/augchan42)
+- GitHub: [@augchan42](https://github.com/augchan42)
 
 ## 🙏 Acknowledgments
 
