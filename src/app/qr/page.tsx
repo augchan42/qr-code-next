@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 
 // Import the QR code generator as named import
-import { QrCode, QrSegment } from "../../typescript-javascript/qrcodegen";
+import { QrCode, QrSegment, Ecc } from "../../typescript-javascript/qrcodegen";
 
 export default function QrCodeGenerator() {
   const [qrText, setQrText] = useState("");
@@ -14,9 +14,8 @@ export default function QrCodeGenerator() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Draw QR code and logo
-  function drawQrCode(qrObj: QrCode, logoUrlVal: string | null, logoSize: number) {
+  function drawQrCode(qrObj: QrCode, logoUrlVal: string | null) {
     if (!qrObj) return;
-    console.log("logoSize: ", logoSize);
     const scale = 10; // 10 pixels per module
     const border = 4; // 4 modules
     const size = (qrObj.size + border * 2) * scale;
@@ -68,23 +67,23 @@ export default function QrCodeGenerator() {
       const segs = [QrSegment.makeBytes(Array.from(new TextEncoder().encode(qrText)))];
       const qrObj = QrCode.encodeSegments(
         segs,
-        QrCode.Ecc.MEDIUM, // Error correction level H
+        Ecc.MEDIUM, // Error correction level H
         1, // min version
         40, // max version (let the library pick the smallest that fits)
         -1, // mask pattern automatic
         true // boost ECC
       );
       setQr(qrObj);
-      drawQrCode(qrObj, logoUrl, logoSizePct);
-    } catch (err: any) {
-      setError("Failed to generate QR code: " + err.message);
+      drawQrCode(qrObj, logoUrl);
+    } catch (err: unknown) {
+      setError("Failed to generate QR code: " + (err instanceof Error ? err.message : String(err)));
     }
   }
 
   // Redraw logo when logo size or logoUrl changes
   useEffect(() => {
     if (qr) {
-      drawQrCode(qr, logoUrl, logoSizePct);
+      drawQrCode(qr, logoUrl);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [logoSizePct, logoUrl]);
