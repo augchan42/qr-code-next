@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     title: "QR Code Generator with Logo | Free Online Tool",
     description: "Generate custom QR codes with logo overlays. Built by Augustin Chan.",
     images: ["/og-image.jpg"],
-    creator: "@augustinchan",
+    creator: "@hosermage_",
   },
   alternates: {
     canonical: "https://junz.ai",
