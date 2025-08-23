@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 
 // Import the QR code generator as named import
-import { QrCode, QrSegment } from "../typescript-javascript/qrcodegen";
+import { QrCode, QrSegment, Ecc } from "../typescript-javascript/qrcodegen.js";
 
 export default function QrCodeGenerator() {
   const [qrText, setQrText] = useState("");
@@ -67,7 +67,7 @@ export default function QrCodeGenerator() {
       const segs = [QrSegment.makeBytes(Array.from(new TextEncoder().encode(qrText)))];
       const qrObj = QrCode.encodeSegments(
         segs,
-        QrCode.Ecc.MEDIUM, // Error correction level M
+        Ecc.MEDIUM, // Error correction level M
         1, // min version
         40, // max version (let the library pick the smallest that fits)
         -1, // mask pattern automatic
