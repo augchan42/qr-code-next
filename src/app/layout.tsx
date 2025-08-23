@@ -1,10 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
+import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const inter = localFont({
+  src: [
+    {
+      path: "../fonts/Inter/InterVariable.ttf",
+      style: "normal",
+    },
+    {
+      path: "../fonts/Inter/InterVariable-Italic.ttf",
+      style: "italic",
+    },
+  ],
+  variable: "--font-inter",
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -14,7 +25,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "QR Code Generator with Logo | Free Online Tool by Augustin Chan",
-  description: "Generate custom QR codes with logo overlays. Upload your logo and create professional QR codes for business cards, marketing materials, and more. Built by Augustin Chan - check out more tools at augustinchan.dev",
+  description: "Generate custom QR codes with logo overlays. Upload your logo and create professional QR codes for business cards, marketing materials, and more. Built by Augustin Chan - augustinchan.dev",
   keywords: "QR code generator, logo QR code, custom QR codes, business QR codes, marketing QR codes, free QR generator",
   authors: [{ name: "Augustin Chan", url: "https://augustinchan.dev" }],
   creator: "Augustin Chan",
@@ -57,7 +68,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} ${geistMono.variable} antialiased`}
       >
         {children}
       </body>

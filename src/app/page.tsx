@@ -110,73 +110,70 @@ export default function QrCodeGenerator() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-8 p-8">
-      <h1 className="text-2xl font-bold">QR Code Generator with Logo</h1>
-      <p className="text-center text-gray-600 max-w-2xl">
-        Create professional QR codes with custom logo overlays. Perfect for business cards, marketing materials, and branding.   
-        Check out more tools at <a href="https://augustinchan.dev" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">augustinchan.dev</a>
-      </p>
-      <form onSubmit={handleGenerate} className="flex flex-col gap-4 w-full max-w-md">
+    <div className="flex flex-col items-center gap-8 p-8 min-h-screen bg-background">
+      <h1 className="text-3xl font-bold text-foreground">QR Code Generator</h1>
+      <form onSubmit={handleGenerate} className="flex flex-col gap-4 w-full max-w-md bg-card p-6 rounded-lg border border-border shadow-sm">
         <label className="flex flex-col gap-2">
-          Text or URL to encode:
+          <span className="text-sm font-medium text-card-foreground">Text or URL to encode:</span>
           <input
             type="text"
             value={qrText}
             onChange={e => setQrText(e.target.value)}
-            className="border rounded px-2 py-1"
+            className="border border-input rounded-md px-3 py-2 text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
             required
           />
         </label>
         <label className="flex flex-col gap-2">
-          Upload logo (optional):
-          <input type="file" accept="image/*" onChange={handleLogoUpload} />
+          <span className="text-sm font-medium text-card-foreground">Upload logo (optional):</span>
+          <input type="file" accept="image/*" onChange={handleLogoUpload} className="text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-secondary file:text-secondary-foreground hover:file:bg-secondary/80 cursor-pointer transition-all" />
         </label>
         {logoUrl && (
           <button
             type="button"
-            className="bg-red-500 text-white rounded px-3 py-1 w-fit self-start hover:bg-red-600"
+            className="bg-destructive text-destructive-foreground rounded-md px-3 py-1.5 text-sm font-medium w-fit self-start hover:bg-destructive/90 transition-colors"
             onClick={() => setLogoUrl(null)}
           >
             Remove logo
           </button>
         )}
         <label className="flex flex-col gap-2">
-          Logo size: {logoSizePct}%
+          <span className="text-sm font-medium text-card-foreground">Logo size: {logoSizePct}%</span>
           <input
             type="range"
             min={10}
             max={40}
             value={logoSizePct}
             onChange={e => setLogoSizePct(Number(e.target.value))}
+            className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
           />
         </label>
-        <button type="submit" className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700">
+        <button type="submit" className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors">
           Generate QR Code
         </button>
-        {error && <div className="text-red-600">{error}</div>}
+        {error && <div className="text-destructive text-sm">{error}</div>}
       </form>
       <canvas
         ref={canvasRef}
-        className="border"
+        className="border border-border rounded-lg shadow-sm"
         style={{ background: "#fff" }}
         width={256}
         height={256}
       />
       {qr && (
-        <div className="text-sm text-gray-600">QR Code version: {qr.version}</div>
+        <div className="text-sm text-muted-foreground">QR Code version: {qr.version}</div>
       )}
       <button
         onClick={handleDownload}
-        className="bg-green-600 text-white rounded px-4 py-2 hover:bg-green-700"
+        className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors"
       >
         Download QR Code
       </button>
-      <footer className="mt-8 text-sm text-gray-500 text-center">
+      <footer className="mt-8 text-sm text-muted-foreground text-center">
         <p>
-          Made with ❤️ by <a href="https://augustinchan.dev" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Augustin Chan</a>
+          Made with ❤️ by <a href="https://augustinchan.dev" className="text-primary hover:text-primary/80 hover:underline transition-colors" target="_blank" rel="noopener noreferrer">Augustin Chan</a>
         </p>
         <p className="mt-2">
-          Discover more projects and tools at <a href="https://augustinchan.dev" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">augustinchan.dev</a>
+          Code at <a href="https://github.com/augchan42/qr-code-next" className="text-primary hover:text-primary/80 hover:underline transition-colors" target="_blank" rel="noopener noreferrer">qr-code-next</a>
         </p>
       </footer>
     </div>
