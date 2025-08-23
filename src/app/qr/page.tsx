@@ -10,12 +10,13 @@ export default function QrCodeGenerator() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [logoSizePct, setLogoSizePct] = useState(20); // percent
   const [error, setError] = useState("");
-  const [qr, setQr] = useState<any>(null); // Store QR object for redrawing
+  const [qr, setQr] = useState<QrCode | null>(null); // Store QR object for redrawing
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Draw QR code and logo
-  function drawQrCode(qrObj: any, logoUrlVal: string | null, logoSize: number) {
+  function drawQrCode(qrObj: QrCode, logoUrlVal: string | null, logoSize: number) {
     if (!qrObj) return;
+    console.log("logoSize: ", logoSize);
     const scale = 10; // 10 pixels per module
     const border = 4; // 4 modules
     const size = (qrObj.size + border * 2) * scale;

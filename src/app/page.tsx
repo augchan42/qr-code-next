@@ -1,102 +1,183 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React, { useRef, useState, useEffect } from "react";
+
+// Import the QR code generator as named import
+import { QrCode, QrSegment } from "../typescript-javascript/qrcodegen";
+
+export default function QrCodeGenerator() {
+  const [qrText, setQrText] = useState("");
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [logoSizePct, setLogoSizePct] = useState(20); // percent
+  const [error, setError] = useState("");
+  const [qr, setQr] = useState<QrCode | null>(null); // Store QR object for redrawing
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Draw QR code and logo
+  function drawQrCode(qrObj: QrCode, logoUrlVal: string | null) {
+    if (!qrObj) return;
+    const scale = 10; // 10 pixels per module
+    const border = 4; // 4 modules
+    const size = (qrObj.size + border * 2) * scale;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    // Draw background
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, size, size);
+    // Draw square modules for maximum compatibility
+    for (let y = -border; y < qrObj.size + border; y++) {
+      for (let x = -border; x < qrObj.size + border; x++) {
+        ctx.fillStyle = qrObj.getModule(x, y) ? "#000000" : "#FFFFFF";
+        ctx.fillRect((x + border) * scale, (y + border) * scale, scale, scale);
+      }
+    }
+    // Draw logo if present
+    if (logoUrlVal) {
+      const img = new window.Image();
+      img.onload = () => {
+        const logoSize = size * (logoSizePct / 100);
+        const x = (size - logoSize) / 2;
+        const y = (size - logoSize) / 2;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(size / 2, size / 2, logoSize / 2, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(img, x, y, logoSize, logoSize);
+        ctx.restore();
+      };
+      img.src = logoUrlVal;
+    }
+  }
+
+  // Generate QR code and draw to canvas
+  function handleGenerate(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (!qrText) {
+      setError("Please enter text to encode.");
+      return;
+    }
+    try {
+      // Use byte mode for encoding
+      const segs = [QrSegment.makeBytes(Array.from(new TextEncoder().encode(qrText)))];
+      const qrObj = QrCode.encodeSegments(
+        segs,
+        QrCode.Ecc.MEDIUM, // Error correction level M
+        1, // min version
+        40, // max version (let the library pick the smallest that fits)
+        -1, // mask pattern automatic
+        true // boost ECC
+      );
+      setQr(qrObj);
+      drawQrCode(qrObj, logoUrl);
+    } catch (err: unknown) {
+      setError("Failed to generate QR code: " + (err instanceof Error ? err.message : String(err)));
+    }
+  }
+
+  // Redraw logo when logo size or logoUrl changes
+  useEffect(() => {
+    if (qr) {
+      drawQrCode(qr, logoUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [logoSizePct, logoUrl]);
+
+  // Download QR code as image
+  function handleDownload() {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const url = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "qr-code.png";
+    a.click();
+  }
+
+  // Handle logo upload
+  function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => setLogoUrl(ev.target?.result as string);
+      reader.readAsDataURL(file);
+    }
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="flex flex-col items-center gap-8 p-8">
+      <h1 className="text-2xl font-bold">QR Code Generator with Logo</h1>
+      <p className="text-center text-gray-600 max-w-2xl">
+        Create professional QR codes with custom logo overlays. Perfect for business cards, marketing materials, and branding.   
+        Check out more tools at <a href="https://augustinchan.dev" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">augustinchan.dev</a>
+      </p>
+      <form onSubmit={handleGenerate} className="flex flex-col gap-4 w-full max-w-md">
+        <label className="flex flex-col gap-2">
+          Text or URL to encode:
+          <input
+            type="text"
+            value={qrText}
+            onChange={e => setQrText(e.target.value)}
+            className="border rounded px-2 py-1"
+            required
+          />
+        </label>
+        <label className="flex flex-col gap-2">
+          Upload logo (optional):
+          <input type="file" accept="image/*" onChange={handleLogoUpload} />
+        </label>
+        {logoUrl && (
+          <button
+            type="button"
+            className="bg-red-500 text-white rounded px-3 py-1 w-fit self-start hover:bg-red-600"
+            onClick={() => setLogoUrl(null)}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+            Remove logo
+          </button>
+        )}
+        <label className="flex flex-col gap-2">
+          Logo size: {logoSizePct}%
+          <input
+            type="range"
+            min={10}
+            max={40}
+            value={logoSizePct}
+            onChange={e => setLogoSizePct(Number(e.target.value))}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+        </label>
+        <button type="submit" className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700">
+          Generate QR Code
+        </button>
+        {error && <div className="text-red-600">{error}</div>}
+      </form>
+      <canvas
+        ref={canvasRef}
+        className="border"
+        style={{ background: "#fff" }}
+        width={256}
+        height={256}
+      />
+      {qr && (
+        <div className="text-sm text-gray-600">QR Code version: {qr.version}</div>
+      )}
+      <button
+        onClick={handleDownload}
+        className="bg-green-600 text-white rounded px-4 py-2 hover:bg-green-700"
+      >
+        Download QR Code
+      </button>
+      <footer className="mt-8 text-sm text-gray-500 text-center">
+        <p>
+          Made with ❤️ by <a href="https://augustinchan.dev" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">Augustin Chan</a>
+        </p>
+        <p className="mt-2">
+          Discover more projects and tools at <a href="https://augustinchan.dev" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">augustinchan.dev</a>
+        </p>
       </footer>
     </div>
   );
