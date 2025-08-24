@@ -111,5 +111,3 @@ Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 - Built with [create-next-app](https://nextjs.org/docs/app/api-reference/cli/create-next-app)
 
 ---
-
-Made with ❤️ by [Augustin Chan](https://augustinchan.dev)

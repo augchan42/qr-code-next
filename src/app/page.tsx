@@ -170,7 +170,7 @@ export default function QrCodeGenerator() {
       </button>
       <footer className="mt-8 text-sm text-muted-foreground text-center">
         <p>
-          Made with ❤️ by <a href="https://augustinchan.dev" className="text-primary hover:text-primary/80 hover:underline transition-colors" target="_blank" rel="noopener noreferrer">Augustin Chan</a>
+          Made with ❤️ by <a href="https://augustinchan.dev" className="text-primary hover:text-primary/80 hover:underline transition-colors" target="_blank" rel="noopener noreferrer">augchan42</a>
         </p>
         <p className="mt-2">
           Code at <a href="https://github.com/augchan42/qr-code-next" className="text-primary hover:text-primary/80 hover:underline transition-colors" target="_blank" rel="noopener noreferrer">qr-code-next</a>
