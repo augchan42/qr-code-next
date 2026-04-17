@@ -9,15 +9,16 @@ export default function QrCodeGenerator() {
   const [qrText, setQrText] = useState("");
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [logoSizePct, setLogoSizePct] = useState(20); // percent
+  const [borderModules, setBorderModules] = useState(4); // quiet zone in modules
   const [error, setError] = useState("");
   const [qr, setQr] = useState<QrCode | null>(null); // Store QR object for redrawing
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Draw QR code and logo
-  function drawQrCode(qrObj: QrCode, logoUrlVal: string | null) {
+  function drawQrCode(qrObj: QrCode, logoUrlVal: string | null, border?: number) {
     if (!qrObj) return;
     const scale = 10; // 10 pixels per module
-    const border = 4; // 4 modules
+    border = border ?? borderModules;
     const size = (qrObj.size + border * 2) * scale;
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -86,7 +87,7 @@ export default function QrCodeGenerator() {
       drawQrCode(qr, logoUrl);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [logoSizePct, logoUrl]);
+  }, [logoSizePct, logoUrl, borderModules]);
 
   // Download QR code as image
   function handleDownload() {
@@ -144,6 +145,17 @@ export default function QrCodeGenerator() {
             max={40}
             value={logoSizePct}
             onChange={e => setLogoSizePct(Number(e.target.value))}
+            className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
+          />
+        </label>
+        <label className="flex flex-col gap-2">
+          <span className="text-sm font-medium text-card-foreground">Quiet zone (border): {borderModules} modules</span>
+          <input
+            type="range"
+            min={0}
+            max={8}
+            value={borderModules}
+            onChange={e => setBorderModules(Number(e.target.value))}
             className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
           />
         </label>
